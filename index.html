@@ -162,18 +162,19 @@ html, body {
 .name-input::placeholder { color: #556677; }
 
 #start-btn {
-  padding: 14px 48px;
+  padding: 7px 20px;
   background: linear-gradient(135deg, var(--amber), #ff6b35);
   border: none;
-  border-radius: 14px;
+  border-radius: 10px;
   color: #1a1a2e;
-  font-size: 20px;
+  font-size: 10px;
   font-family: 'Black Han Sans', sans-serif;
   cursor: pointer;
   transition: all 0.2s;
   letter-spacing: 1px;
+  white-space: nowrap;
 }
-#start-btn:hover { transform: scale(1.05); box-shadow: 0 0 30px var(--amber-glow); }
+#start-btn:hover { transform: scale(1.05); box-shadow: 0 0 20px var(--amber-glow); }
 #start-btn:active { transform: scale(0.96); }
 
 /* ── Game Screen ──────────────────────────────── */
@@ -425,7 +426,7 @@ html, body {
   border: none;
   border-radius: 10px;
   color: var(--bg);
-  font-size: clamp(12px, 1.56vw, 17px);
+  font-size: clamp(14px, 1.8vw, 20px);
   font-family: 'Black Han Sans', sans-serif;
   cursor: pointer;
   transition: all 0.15s;
@@ -539,7 +540,7 @@ html, body {
   animation: spin 0.8s linear infinite;
 }
 .brewing-text {
-  font-size: 1rem;
+  font-size: 1.5rem;
   font-weight: bold;
   color: rgba(255,255,255,0.85);
   font-family: 'Black Han Sans', sans-serif;
@@ -708,11 +709,10 @@ html, body {
       <button class="count-btn" onclick="changeCount(-1)">−</button>
       <span class="count-display" id="count-display">4</span>
       <button class="count-btn" onclick="changeCount(1)">+</button>
+      <button id="start-btn" onclick="startGame()">GAME START !</button>
     </div>
 
     <div id="name-inputs"></div>
-
-    <button id="start-btn" onclick="startGame()">게임 시작! START</button>
   </div>
 
   <!-- Game Screen -->
