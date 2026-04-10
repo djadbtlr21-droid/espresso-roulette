@@ -443,48 +443,53 @@ html, body {
   box-shadow: none;
 }
 
-/* ── Speech Bubble (water result) ─────────────── */
-.speech-bubble {
-  position: absolute;
-  bottom: -8px;
-  left: 50%;
-  transform: translateX(-50%) translateY(100%);
+/* ── Water Modal Overlay ──────────────────────── */
+#water-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 150;
+  align-items: center;
+  justify-content: center;
+  animation: waterModalIn 0.3s ease-out;
+}
+#water-overlay.visible { display: flex; }
+#water-overlay.fade-out { animation: waterModalOut 0.5s ease-in forwards; }
+
+#water-modal {
   background: white;
   color: #333;
-  font-family: 'Black Han Sans', sans-serif;
-  font-size: clamp(9px, 1.2vw, 13px);
-  padding: 8px 12px;
-  border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
-  white-space: nowrap;
-  z-index: 10;
-  animation: bubbleIn 0.3s ease-out;
-  max-width: 200%;
+  min-width: 70vw;
+  padding: 40px;
+  border-radius: 20px;
   text-align: center;
-  line-height: 1.4;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.4);
 }
-.speech-bubble::before {
-  content: '';
-  position: absolute;
-  top: -8px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0; height: 0;
-  border-left: 8px solid transparent;
-  border-right: 8px solid transparent;
-  border-bottom: 8px solid white;
+#water-modal .water-icon {
+  font-size: clamp(50px, 10vw, 80px);
+  display: block;
+  margin-bottom: 12px;
 }
-.speech-bubble.fade-out {
-  animation: bubbleFade 0.5s ease-in forwards;
+#water-modal .water-name {
+  font-size: clamp(1.4rem, 4vw, 2.2rem);
+  font-family: 'Black Han Sans', sans-serif;
+  color: #4a90d9;
+  margin-bottom: 10px;
+}
+#water-modal .water-msg {
+  font-size: clamp(1.2rem, 3vw, 2rem);
+  font-family: 'Black Han Sans', sans-serif;
+  color: #333;
+  line-height: 1.5;
 }
 
-@keyframes bubbleIn {
-  0% { opacity: 0; transform: translateX(-50%) translateY(100%) scale(0.8); }
-  100% { opacity: 1; transform: translateX(-50%) translateY(100%) scale(1); }
+@keyframes waterModalIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
 }
-@keyframes bubbleFade {
+@keyframes waterModalOut {
   0% { opacity: 1; }
-  100% { opacity: 0; transform: translateX(-50%) translateY(100%) scale(0.9); }
+  100% { opacity: 0; }
 }
 
 /* Steam particles */
@@ -704,6 +709,15 @@ html, body {
       <div class="turn-info" id="turn-info"></div>
     </div>
     <div id="machines-container"></div>
+  </div>
+
+  <!-- Water Result Overlay -->
+  <div id="water-overlay">
+    <div id="water-modal">
+      <span class="water-icon">💧</span>
+      <div class="water-name" id="water-name"></div>
+      <div class="water-msg">물만 뽑혔습니다!<br>커피를 살 자격이 없어요!!</div>
+    </div>
   </div>
 
   <!-- Flash Overlay -->
@@ -935,21 +949,18 @@ function handleButtonPress(machineIndex) {
   }, delay);
 }
 
-// ── Speech Bubble (water result) ─────────────
-function showSpeechBubble(machineIndex) {
-  const wrapper = document.getElementById(`wrapper-${machineIndex}`);
-  // Remove any existing bubble
-  const old = wrapper.querySelector('.speech-bubble');
-  if (old) old.remove();
+// ── Water Result Modal ───────────────────────
+function showWaterModal(machineIndex) {
+  const overlay = document.getElementById('water-overlay');
+  document.getElementById('water-name').textContent = playerNames[machineIndex];
+  overlay.classList.remove('fade-out');
+  overlay.classList.add('visible');
 
-  const bubble = document.createElement('div');
-  bubble.className = 'speech-bubble';
-  bubble.textContent = '물만 나왔습니다! 당신은 커피를 살 자격이 없어요!!';
-  wrapper.appendChild(bubble);
-
-  // Fade out after 2.5s, remove at 3s
-  setTimeout(() => bubble.classList.add('fade-out'), 2500);
-  setTimeout(() => bubble.remove(), 3000);
+  // Auto-dismiss after 2000ms
+  setTimeout(() => overlay.classList.add('fade-out'), 1500);
+  setTimeout(() => {
+    overlay.classList.remove('visible', 'fade-out');
+  }, 2000);
 }
 
 // ── Animate Pour ─────────────────────────────
@@ -997,7 +1008,7 @@ function animatePour(machineIndex, isEspresso) {
     // Steam after pour
     setTimeout(() => spawnSteam(machineIndex), 1000);
     // Speech bubble
-    setTimeout(() => showSpeechBubble(machineIndex), 1200);
+    setTimeout(() => showWaterModal(machineIndex), 1200);
 
     updateTurnInfo();
 
